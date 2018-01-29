@@ -91,6 +91,8 @@ class WebManager private constructor() {
 
     companion object {
         private val URL_HOST = "https://api.themoviedb.org/4/"
+        private val IMAGE_PREFIX = "https://image.tmdb.org/t/p/w500"
+
         private val CONNECT_TIMEOUT = 5
         private val WRITE_TIMEOUT = 50
         private val READ_TIMEOUT = 10

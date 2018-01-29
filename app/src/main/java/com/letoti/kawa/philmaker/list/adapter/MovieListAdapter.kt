@@ -8,15 +8,16 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.letoti.kawa.philmaker.R
-import com.letoti.kawa.philmaker.web.MovieDto
+import com.letoti.kawa.philmaker.web.entity.MovieDto
+import com.letoti.kawa.philmaker.web.entity.MovieItem
 
 /**
  * Created by kawa on 29.01.2018.
  */
 
-class MovieListAdapter(private var mDataSet: ArrayList<MovieDto>) : RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
+class MovieListAdapter(private var mDataSet: ArrayList<MovieItem>) : RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
 
-    var dataSet: ArrayList<MovieDto>
+    var dataSet: ArrayList<MovieItem>
         get() {
 
             return mDataSet
@@ -43,7 +44,7 @@ class MovieListAdapter(private var mDataSet: ArrayList<MovieDto>) : RecyclerView
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         val item = mDataSet[position]
-        holder!!.icon.setImageURI(Uri.parse(item.iconUrl))
+        holder!!.icon.setImageURI(Uri.parse(item.poster_path))
         holder.title.text = item.title
     }
 }

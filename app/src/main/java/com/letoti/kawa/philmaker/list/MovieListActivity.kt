@@ -12,7 +12,7 @@ import com.letoti.kawa.philmaker.R
 import com.letoti.kawa.philmaker.common.BaseActivity
 import com.letoti.kawa.philmaker.common.BaseOnQueryTextListener
 import com.letoti.kawa.philmaker.list.adapter.MovieListAdapter
-import com.letoti.kawa.philmaker.web.MovieDto
+import com.letoti.kawa.philmaker.web.entity.MovieDto
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MovieListActivity : BaseActivity(), MovieListView {
@@ -33,6 +33,13 @@ class MovieListActivity : BaseActivity(), MovieListView {
         mListAdapter = MovieListAdapter(ArrayList())
         mRecyclerView = recycler_view
         mLayoutManager = LinearLayoutManager(this)
+
+        mRecyclerView.adapter = mListAdapter
+        mRecyclerView.layoutManager = mLayoutManager
+
+        refresh_layout.setOnRefreshListener { receiveCommonData() }
+
+        receiveCommonData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -51,12 +58,12 @@ class MovieListActivity : BaseActivity(), MovieListView {
     }
 
     private fun receiveCommonData() {
-
+        presenter.getMovie("", 1)
     }
 
-    override fun showMovieList(list: ArrayList<MovieDto>) {
+    override fun showMovieList(item: MovieDto) {
         mListAdapter.dataSet.clear()
-        mListAdapter.dataSet = list
+        mListAdapter.dataSet = item.results
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -83,5 +90,13 @@ class MovieListActivity : BaseActivity(), MovieListView {
             receiveCommonData()
             false
         }
+    }
+
+    override fun showLoadingProgress() {
+        refresh_layout.isRefreshing = true
+    }
+
+    override fun hideLoadingProgress() {
+        refresh_layout.isRefreshing = false
     }
 }

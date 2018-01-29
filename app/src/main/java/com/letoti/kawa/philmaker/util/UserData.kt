@@ -15,7 +15,7 @@ class UserData private constructor() {
 
     var accessToken: String
         get() {
-            return mSharedPreferences!!.getString(ACCESS_TOKEN, null)
+            return mSharedPreferences!!.getString(ACCESS_TOKEN, "c33e25174af866c5c102772d92d0e480")
         }
         set(value) {
             val prefsEditor = mSharedPreferences!!.edit()

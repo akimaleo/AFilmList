@@ -1,6 +1,6 @@
 package com.letoti.kawa.philmaker.web.api
 
-import com.letoti.kawa.philmaker.web.MovieDto
+import com.letoti.kawa.philmaker.web.entity.MovieDto
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -10,5 +10,5 @@ import retrofit2.http.Query
  */
 interface MovieAPI {
     @GET("discover/movie")
-    fun getMovieList(@Query("page") page: Int, @Query("with_keywords") withKeywords: String): Observable<ArrayList<MovieDto>>
+    fun getMovieList(@Query("page") page: Int, @Query("with_keywords") withKeywords: String): Observable<MovieDto>
 }

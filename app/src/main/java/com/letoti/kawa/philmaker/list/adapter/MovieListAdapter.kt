@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.letoti.kawa.philmaker.R
-import com.letoti.kawa.philmaker.web.entity.MovieDto
+import com.letoti.kawa.philmaker.web.WebManager
 import com.letoti.kawa.philmaker.web.entity.MovieItem
 
 /**
@@ -19,7 +19,6 @@ class MovieListAdapter(private var mDataSet: ArrayList<MovieItem>) : RecyclerVie
 
     var dataSet: ArrayList<MovieItem>
         get() {
-
             return mDataSet
         }
         set(value) {
@@ -42,9 +41,9 @@ class MovieListAdapter(private var mDataSet: ArrayList<MovieItem>) : RecyclerVie
         return mDataSet.size
     }
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mDataSet[position]
-        holder!!.icon.setImageURI(Uri.parse(item.poster_path))
+        WebManager.ImageLoader.loadImage(holder.icon.context, item.poster_path, holder.icon, R.drawable.ic_placeholder)
         holder.title.text = item.title
     }
 }

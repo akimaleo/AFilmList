@@ -1,6 +1,9 @@
 package com.letoti.kawa.philmaker.web
 
 import android.content.Context
+import android.support.annotation.DrawableRes
+import android.util.Log
+import android.widget.ImageView
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -8,6 +11,7 @@ import com.letoti.kawa.philmaker.BuildConfig
 import com.letoti.kawa.philmaker.util.UserData
 import com.letoti.kawa.philmaker.web.api.MovieAPI
 import com.letoti.kawa.philmaker.web.service.MovieService
+import com.squareup.picasso.Picasso
 
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -102,5 +106,17 @@ class WebManager private constructor() {
 
     private object Holder {
         val INSTANCE = WebManager()
+    }
+
+    object ImageLoader {
+        fun loadImage(context: Context, path: String, imageView: ImageView, @DrawableRes placeholder: Int) {
+            Picasso.with(context)
+                    .load(IMAGE_PREFIX + path)
+                    .placeholder(placeholder)
+                    .into(imageView)
+            
+            if (BuildConfig.DEBUG)
+                Log.i("IMAGE URL", IMAGE_PREFIX + path)
+        }
     }
 }

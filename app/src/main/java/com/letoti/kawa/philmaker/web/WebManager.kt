@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
  * Created by akimaleo on 03.02.17.
  */
 class WebManager private constructor() {
-    
+
     private val INTERCEPTOR_QUERY = Interceptor { chain ->
         var request = chain.request()
 
@@ -38,23 +38,20 @@ class WebManager private constructor() {
         chain.proceed(request)
     }
 
-    private var retrofit: Retrofit? = null
+    private var _retrofit: Retrofit? = null
+    val retrofit: Retrofit
         get() {
-            if (field == null) {
-                field = Retrofit.Builder()
+            if (_retrofit == null) {
+                _retrofit = Retrofit.Builder()
                         .baseUrl(URL_HOST)
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                         .client(client)
                         .addConverterFactory(GsonConverterFactory.create(gson))
                         .build()
             }
-            return field
+            return _retrofit!!
         }
 
-    private val gson: Gson
-        get() = GsonBuilder()
-                .setLenient()
-                .create()
     private var client: OkHttpClient? = null
         get() {
             if (field == null) {
@@ -73,10 +70,22 @@ class WebManager private constructor() {
             return field!!
         }
 
+    private val gson: Gson
+        get() = GsonBuilder()
+                .setLenient()
+                .create()
+
+
     companion object {
         private val URL_HOST = "https://api.themoviedb.org/4/"
         private val CONNECT_TIMEOUT = 5
         private val WRITE_TIMEOUT = 50
         private val READ_TIMEOUT = 10
+
+        val instance: WebManager by lazy { Holder.INSTANCE }
+    }
+
+    private object Holder {
+        val INSTANCE = WebManager()
     }
 }

@@ -1,4 +1,4 @@
-package com.letoti.kawa.philmaker.common
+package com.letoti.kawa.philmaker.view.common
 
 import android.app.Application
 import com.letoti.kawa.philmaker.util.UserData

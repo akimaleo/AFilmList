@@ -1,6 +1,5 @@
-package com.letoti.kawa.philmaker.list.adapter
+package com.letoti.kawa.philmaker.view.list.adapter
 
-import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -17,16 +16,18 @@ import com.letoti.kawa.philmaker.web.entity.MovieItem
 
 class MovieListAdapter(private var mDataSet: ArrayList<MovieItem>) : RecyclerView.Adapter<MovieListAdapter.ViewHolder>() {
 
+    var mOnItemClickListener: ((position: Int, item: MovieItem) -> (Unit)) = { position, item -> }
+
     var dataSet: ArrayList<MovieItem>
         get() {
             return mDataSet
         }
         set(value) {
             mDataSet = value
-            notifyDataSetChanged()
         }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val background: View = view.findViewById(R.id.movie_item_background)
         val icon: ImageView = view.findViewById(R.id.movie_icon)
         val title: TextView = view.findViewById(R.id.movie_name)
     }
@@ -43,8 +44,13 @@ class MovieListAdapter(private var mDataSet: ArrayList<MovieItem>) : RecyclerVie
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mDataSet[position]
-        WebManager.ImageLoader.loadImage(holder.icon.context, item.poster_path, holder.icon, R.drawable.ic_placeholder)
+        WebManager.ImageLoader.loadImage(holder.icon.context,
+                item.poster_path,
+                holder.icon,
+                WebManager.ImageLoader.Size.THUMBNAIL,
+                R.drawable.ic_placeholder)
         holder.title.text = item.title
+        holder.background.setOnClickListener { mOnItemClickListener(position, item) }
     }
 }
 

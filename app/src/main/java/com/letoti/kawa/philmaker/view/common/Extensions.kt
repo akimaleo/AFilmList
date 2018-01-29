@@ -1,4 +1,4 @@
-package com.letoti.kawa.philmaker.common
+package com.letoti.kawa.philmaker.view.common
 
 import android.support.v7.widget.SearchView
 

@@ -1,4 +1,4 @@
-package com.letoti.kawa.philmaker.list
+package com.letoti.kawa.philmaker.view.list
 
 /**
  * Created by kawa on 29.01.2018.

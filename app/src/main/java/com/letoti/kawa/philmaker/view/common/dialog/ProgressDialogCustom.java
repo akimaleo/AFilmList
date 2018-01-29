@@ -1,4 +1,4 @@
-package com.letoti.kawa.philmaker.common.dialog;
+package com.letoti.kawa.philmaker.view.common.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

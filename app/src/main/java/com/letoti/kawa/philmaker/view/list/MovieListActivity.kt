@@ -1,17 +1,22 @@
-package com.letoti.kawa.philmaker.list
+package com.letoti.kawa.philmaker.view.list
 
+import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
+import android.util.Log
 import android.view.Menu
-import android.view.MenuItem
 import com.letoti.kawa.philmaker.R
-import com.letoti.kawa.philmaker.common.BaseActivity
-import com.letoti.kawa.philmaker.common.BaseOnQueryTextListener
-import com.letoti.kawa.philmaker.list.adapter.MovieListAdapter
+import com.letoti.kawa.philmaker.view.common.BaseActivity
+import com.letoti.kawa.philmaker.view.common.BaseOnQueryTextListener
+import com.letoti.kawa.philmaker.view.common.dialog.DialogFactory
+import com.letoti.kawa.philmaker.view.detailedinfo.MovieInfoActivity
+import com.letoti.kawa.philmaker.view.list.adapter.EndlessRecyclerViewScrollListener
+import com.letoti.kawa.philmaker.view.list.adapter.MovieListAdapter
 import com.letoti.kawa.philmaker.web.entity.MovieDto
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,48 +41,31 @@ class MovieListActivity : BaseActivity(), MovieListView {
 
         mRecyclerView.adapter = mListAdapter
         mRecyclerView.layoutManager = mLayoutManager
-
+        mRecyclerView.addOnScrollListener(object : EndlessRecyclerViewScrollListener(mLayoutManager as LinearLayoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                getMore(page + 1)
+            }
+        })
+        mListAdapter.mOnItemClickListener = { position, item ->
+            val intent = Intent(this@MovieListActivity, MovieInfoActivity::class.java)
+            startActivityForResult(intent, REQ_INFO_ACTIVITY)
+        }
         refresh_layout.setOnRefreshListener { receiveCommonData() }
-
         receiveCommonData()
     }
 
+    /**
+     * Init search view
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.search, menu)
-
         val searchItem = menu.findItem(R.id.action_search)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-
         if (searchItem != null) {
             searchView = searchItem.actionView as SearchView
             if (::searchView.isInitialized)
                 searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         }
-        initSearchView()
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    private fun receiveCommonData() {
-        presenter.getMovie("", 1)
-    }
-
-    override fun showMovieList(item: MovieDto) {
-        mListAdapter.dataSet.clear()
-        mListAdapter.dataSet = item.results
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_search -> {
-                return false
-            }
-            else -> {
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    private fun initSearchView() {
         val queryTextListener = object : BaseOnQueryTextListener() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 hideSoftwareKeyboard()
@@ -90,6 +78,36 @@ class MovieListActivity : BaseActivity(), MovieListView {
             receiveCommonData()
             false
         }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    /**
+     * Get first data
+     */
+    private fun receiveCommonData() {
+        presenter.getMovie(query, 1)
+    }
+
+    /**
+     * User for requests with pagination
+     */
+    private fun getMore(page: Int) {
+        presenter.getMovie(query, page)
+        Log.i("PAGINATION", "page:= $page")
+    }
+
+    private val query: String
+        get() = if (::searchView.isInitialized) searchView.query.toString() else ""
+
+    override fun showMovieList(item: MovieDto) {
+        mListAdapter.dataSet.clear()
+        mListAdapter.dataSet = item.results
+        mListAdapter.notifyDataSetChanged()
+    }
+
+    override fun addMovieList(item: MovieDto) {
+        mListAdapter.dataSet.addAll(item.results)
+        mListAdapter.notifyDataSetChanged()
     }
 
     override fun showLoadingProgress() {
@@ -98,5 +116,20 @@ class MovieListActivity : BaseActivity(), MovieListView {
 
     override fun hideLoadingProgress() {
         refresh_layout.isRefreshing = false
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQ_INFO_ACTIVITY -> {
+                    DialogFactory.showAlertMessage(getString(R.string.error_message))
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    companion object {
+        val REQ_INFO_ACTIVITY = 0
     }
 }

@@ -1,4 +1,4 @@
-package com.letoti.kawa.philmaker.common
+package com.letoti.kawa.philmaker.view.common
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -6,7 +6,7 @@ import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
 import com.letoti.kawa.philmaker.R
-import com.letoti.kawa.philmaker.common.dialog.DialogFactory
+import com.letoti.kawa.philmaker.view.common.dialog.DialogFactory
 
 /**
  * Created by kawa on 29.01.2018.

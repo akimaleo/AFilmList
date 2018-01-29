@@ -1,6 +1,6 @@
-package com.letoti.kawa.philmaker.list
+package com.letoti.kawa.philmaker.view.list
 
-import com.letoti.kawa.philmaker.common.IView
+import com.letoti.kawa.philmaker.view.common.IView
 import com.letoti.kawa.philmaker.web.entity.MovieDto
 
 /**
@@ -9,4 +9,5 @@ import com.letoti.kawa.philmaker.web.entity.MovieDto
 
 interface MovieListView : IView {
     fun showMovieList(item: MovieDto)
+    fun addMovieList(item: MovieDto)
 }

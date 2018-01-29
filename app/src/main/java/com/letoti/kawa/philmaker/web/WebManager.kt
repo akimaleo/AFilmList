@@ -95,7 +95,7 @@ class WebManager private constructor() {
 
     companion object {
         private val URL_HOST = "https://api.themoviedb.org/4/"
-        private val IMAGE_PREFIX = "https://image.tmdb.org/t/p/w500"
+        private val IMAGE_PREFIX = "https://image.tmdb.org/t/p/%s"
 
         private val CONNECT_TIMEOUT = 5
         private val WRITE_TIMEOUT = 50
@@ -109,14 +109,20 @@ class WebManager private constructor() {
     }
 
     object ImageLoader {
-        fun loadImage(context: Context, path: String, imageView: ImageView, @DrawableRes placeholder: Int) {
+        fun loadImage(context: Context, path: String, imageView: ImageView, imageSize: Size, @DrawableRes placeholder: Int) {
             Picasso.with(context)
-                    .load(IMAGE_PREFIX + path)
+                    .load(IMAGE_PREFIX.format(imageSize.rawValue) + path)
                     .placeholder(placeholder)
                     .into(imageView)
-            
+
             if (BuildConfig.DEBUG)
-                Log.i("IMAGE URL", IMAGE_PREFIX + path)
+                Log.i("IMAGE URL", IMAGE_PREFIX.format(imageSize.rawValue) + path)
+        }
+
+        enum class Size(val rawValue: String) {
+            THUMBNAIL("w150"),
+            MEDIUM("w500"),
+            BIG("w1280")
         }
     }
 }

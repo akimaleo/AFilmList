@@ -1,4 +1,4 @@
-package com.letoti.kawa.philmaker.list
+package com.letoti.kawa.philmaker.view.list
 
 import com.letoti.kawa.philmaker.web.WebManager
 
@@ -14,7 +14,11 @@ class MovieListPresenterImpl(var view: MovieListView) : MovieListPresenter {
                 .getMovieList(page, keyWord)
                 .subscribe({ resp ->
                     view.hideLoadingProgress()
-                    view.showMovieList(resp)
+                    if (page > 1) {
+                        view.addMovieList(resp)
+                    } else {
+                        view.showMovieList(resp)
+                    }
                 }, { err ->
                     view.hideLoadingProgress()
                     err.printStackTrace()

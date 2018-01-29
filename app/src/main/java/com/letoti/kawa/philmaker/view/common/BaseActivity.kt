@@ -31,7 +31,7 @@ open class BaseActivity : AppCompatActivity(), IView {
     }
 
     override fun showErrorMessage() {
-        DialogFactory.showAlertMessage(getString(R.string.error_message))
+        DialogFactory.showAlertMessage(this, getString(R.string.error_message))
     }
 
 

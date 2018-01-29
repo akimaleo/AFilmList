@@ -1,8 +1,10 @@
 package com.letoti.kawa.philmaker.view.common.dialog
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.app.DialogFragment
 import android.content.Context
+import android.content.DialogInterface
 
 object DialogFactory {
 
@@ -16,16 +18,36 @@ object DialogFactory {
         return progressDialog
     }
 
-    fun showAlertMessage(message: String,
+    fun showAlertMessage(context: Context,
+                         title: String,
+                         message: String,
                          positiveButtonTitle: String,
                          negativeButtonTitle: String,
-                         onSubmitClickListener: ((DialogFragment) -> (Unit)),
-                         onCancelClickListener: ((DialogFragment) -> (Unit))): AlertDialogCustom {
-
-        return AlertDialogCustom.createDialog(message, positiveButtonTitle, negativeButtonTitle, onSubmitClickListener, onCancelClickListener)
+                         onSubmitClickListener: (() -> (Unit))?,
+                         onCancelClickListener: (() -> (Unit))?): Dialog {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(title)
+                .setMessage(message)
+        if (onSubmitClickListener != null)
+            builder.setPositiveButton(if (positiveButtonTitle.isBlank()) context.getString(android.R.string.ok) else positiveButtonTitle,
+                    DialogInterface.OnClickListener { dialog, id ->
+                        onSubmitClickListener()
+                        dialog.dismiss()
+                    })
+        if (onCancelClickListener != null)
+            builder.setNegativeButton(if (negativeButtonTitle.isBlank()) context.getString(android.R.string.cancel) else negativeButtonTitle,
+                    DialogInterface.OnClickListener { dialog, id ->
+                        onCancelClickListener()
+                        dialog.dismiss()
+                    })
+        return builder.create()
     }
 
-    fun showAlertMessage(message: String): AlertDialogCustom {
-        return showAlertMessage(message, "", "", {}, {})
+    fun showAlertMessage(context: Context, title: String, message: String): Dialog {
+        return showAlertMessage(context, title, message, "", "", {}, null)
+    }
+
+    fun showAlertMessage(context: Context, title: String): Dialog {
+        return showAlertMessage(context, title, "", "", "", {}, null)
     }
 }

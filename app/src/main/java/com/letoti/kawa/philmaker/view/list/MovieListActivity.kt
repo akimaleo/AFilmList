@@ -122,7 +122,7 @@ class MovieListActivity : BaseActivity(), MovieListView {
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQ_INFO_ACTIVITY -> {
-                    DialogFactory.showAlertMessage(getString(R.string.error_message))
+                    DialogFactory.showAlertMessage(this, getString(R.string.error_message)).show()
                 }
             }
         }
@@ -130,6 +130,6 @@ class MovieListActivity : BaseActivity(), MovieListView {
     }
 
     companion object {
-        val REQ_INFO_ACTIVITY = 0
+        private const val REQ_INFO_ACTIVITY = 0
     }
 }

@@ -6,6 +6,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.letoti.kawa.philmaker.BuildConfig
 import com.letoti.kawa.philmaker.util.UserData
+import com.letoti.kawa.philmaker.web.api.MovieAPI
+import com.letoti.kawa.philmaker.web.service.MovieService
 
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -75,6 +77,17 @@ class WebManager private constructor() {
                 .setLenient()
                 .create()
 
+    /**
+     * Services list for HTTP requests
+     */
+    private var _movieService: MovieAPI? = null
+    val movieService: MovieAPI
+        get() {
+            if (_movieService == null) {
+                _movieService = MovieService()
+            }
+            return _movieService!!
+        }
 
     companion object {
         private val URL_HOST = "https://api.themoviedb.org/4/"

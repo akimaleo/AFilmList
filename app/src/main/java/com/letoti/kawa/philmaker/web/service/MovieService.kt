@@ -1,6 +1,6 @@
 package com.letoti.kawa.philmaker.web.service
 
-import com.letoti.kawa.philmaker.web.FilmDto
+import com.letoti.kawa.philmaker.web.MovieDto
 import com.letoti.kawa.philmaker.web.WebManager
 import com.letoti.kawa.philmaker.web.api.MovieAPI
 import io.reactivex.Observable
@@ -15,7 +15,7 @@ class MovieService : MovieAPI {
 
     private val service = WebManager.instance.retrofit.create(MovieAPI::class.java)
 
-    override fun getMovieList(page: Int, withKeywords: String): Observable<ArrayList<FilmDto>> {
+    override fun getMovieList(page: Int, withKeywords: String): Observable<ArrayList<MovieDto>> {
         return service.getMovieList(page, withKeywords).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread())
     }
 }

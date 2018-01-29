@@ -3,24 +3,37 @@ package com.letoti.kawa.philmaker.list
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
-import android.view.inputmethod.InputMethodManager
 import com.letoti.kawa.philmaker.R
 import com.letoti.kawa.philmaker.common.BaseActivity
+import com.letoti.kawa.philmaker.common.BaseOnQueryTextListener
+import com.letoti.kawa.philmaker.list.adapter.MovieListAdapter
+import com.letoti.kawa.philmaker.web.MovieDto
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MovieListActivity : BaseActivity() {
+class MovieListActivity : BaseActivity(), MovieListView {
+
+    private lateinit var mListAdapter: MovieListAdapter
+    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var mLayoutManager: RecyclerView.LayoutManager
+    private lateinit var searchView: SearchView
+
+    private lateinit var presenter: MovieListPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-    }
+        presenter = MovieListPresenterImpl(this)
 
-    //    SEARCH VIEW
-    private var searchView: SearchView? = null
-    private var queryTextListener: SearchView.OnQueryTextListener? = null
+        mListAdapter = MovieListAdapter(ArrayList())
+        mRecyclerView = recycler_view
+        mLayoutManager = LinearLayoutManager(this)
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.search, menu)
@@ -30,51 +43,45 @@ class MovieListActivity : BaseActivity() {
 
         if (searchItem != null) {
             searchView = searchItem.actionView as SearchView
-        }
-        if (searchView != null) {
-            searchView!!.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            if (::searchView.isInitialized)
+                searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         }
         initSearchView()
         return super.onCreateOptionsMenu(menu)
     }
 
+    private fun receiveCommonData() {
+
+    }
+
+    override fun showMovieList(list: ArrayList<MovieDto>) {
+        mListAdapter.dataSet.clear()
+        mListAdapter.dataSet = list
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_search -> {
-                title = ""
                 return false
             }
             else -> {
             }
         }
-//        initSearchView()
         return super.onOptionsItemSelected(item)
     }
 
     private fun initSearchView() {
-
-        queryTextListener = object : SearchView.OnQueryTextListener {
-            override fun onQueryTextChange(newText: String): Boolean {
-                //if want to do request on text change
-                return true
-            }
-
-            override fun onQueryTextSubmit(query: String): Boolean {
-//                receiveAllData()
-                val view = currentFocus
-                if (view != null) {
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(view.windowToken, 0)
-                }
+        val queryTextListener = object : BaseOnQueryTextListener() {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                hideSoftwareKeyboard()
+                receiveCommonData()
                 return true
             }
         }
-        searchView!!.setOnQueryTextListener(queryTextListener)
-        searchView!!.setOnCloseListener {
-            //            setToolbarTitle(title)
-//            receiveAllData()
+        searchView.setOnQueryTextListener(queryTextListener)
+        searchView.setOnCloseListener {
+            receiveCommonData()
             false
         }
     }
-
 }

@@ -5,5 +5,5 @@ package com.letoti.kawa.philmaker.view.list
  */
 
 interface MovieListPresenter {
-    fun getMovie(keyWord: String, page: Int)
+    fun getMovie(query: String, page: Int)
 }

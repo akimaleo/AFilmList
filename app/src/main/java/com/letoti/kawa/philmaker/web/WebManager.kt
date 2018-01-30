@@ -109,11 +109,13 @@ class WebManager private constructor() {
     }
 
     object ImageLoader {
-        fun loadImage(context: Context, path: String, imageView: ImageView, imageSize: Size, @DrawableRes placeholder: Int) {
-            Picasso.with(context)
+        fun loadImage(imageView: ImageView, path: String, imageSize: Size, @DrawableRes placeholder: Int) {
+            if (path.isBlank()) return
+            val req = Picasso.with(imageView.context)
                     .load(IMAGE_PREFIX.format(imageSize.rawValue) + path)
-                    .placeholder(placeholder)
-                    .into(imageView)
+            if (placeholder != 0)
+                req.placeholder(placeholder)
+            req.into(imageView)
 
             if (BuildConfig.DEBUG)
                 Log.i("IMAGE URL", IMAGE_PREFIX.format(imageSize.rawValue) + path)

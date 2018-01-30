@@ -44,9 +44,8 @@ class MovieListAdapter(private var mDataSet: ArrayList<MovieItem>) : RecyclerVie
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mDataSet[position]
-        WebManager.ImageLoader.loadImage(holder.icon.context,
-                item.poster_path,
-                holder.icon,
+        WebManager.ImageLoader.loadImage(holder.icon,
+                item.poster_path ?: "",
                 WebManager.ImageLoader.Size.THUMBNAIL,
                 R.drawable.ic_placeholder)
         holder.title.text = item.title

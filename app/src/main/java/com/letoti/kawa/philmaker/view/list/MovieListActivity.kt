@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
+import com.google.gson.Gson
 import com.letoti.kawa.philmaker.R
 import com.letoti.kawa.philmaker.view.common.BaseActivity
 import com.letoti.kawa.philmaker.view.common.BaseOnQueryTextListener
@@ -17,7 +18,7 @@ import com.letoti.kawa.philmaker.view.common.dialog.DialogFactory
 import com.letoti.kawa.philmaker.view.detailedinfo.MovieInfoActivity
 import com.letoti.kawa.philmaker.view.list.adapter.EndlessRecyclerViewScrollListener
 import com.letoti.kawa.philmaker.view.list.adapter.MovieListAdapter
-import com.letoti.kawa.philmaker.web.entity.MovieDto
+import com.letoti.kawa.philmaker.web.entity.MovieShortDto
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MovieListActivity : BaseActivity(), MovieListView {
@@ -48,7 +49,9 @@ class MovieListActivity : BaseActivity(), MovieListView {
         })
         mListAdapter.mOnItemClickListener = { position, item ->
             val intent = Intent(this@MovieListActivity, MovieInfoActivity::class.java)
-            startActivityForResult(intent, REQ_INFO_ACTIVITY)
+            intent.putExtra("movie_id", item.id)
+            intent.putExtra("short_info", Gson().toJson(item))
+            startActivity(intent)
         }
         refresh_layout.setOnRefreshListener { receiveCommonData() }
         receiveCommonData()
@@ -85,6 +88,8 @@ class MovieListActivity : BaseActivity(), MovieListView {
      * Get first data
      */
     private fun receiveCommonData() {
+        mListAdapter.dataSet.clear()
+        mListAdapter.notifyDataSetChanged()
         presenter.getMovie(query, 1)
     }
 
@@ -99,13 +104,13 @@ class MovieListActivity : BaseActivity(), MovieListView {
     private val query: String
         get() = if (::searchView.isInitialized) searchView.query.toString() else ""
 
-    override fun showMovieList(item: MovieDto) {
+    override fun showMovieList(item: MovieShortDto) {
         mListAdapter.dataSet.clear()
         mListAdapter.dataSet = item.results
         mListAdapter.notifyDataSetChanged()
     }
 
-    override fun addMovieList(item: MovieDto) {
+    override fun addMovieList(item: MovieShortDto) {
         mListAdapter.dataSet.addAll(item.results)
         mListAdapter.notifyDataSetChanged()
     }
@@ -116,20 +121,5 @@ class MovieListActivity : BaseActivity(), MovieListView {
 
     override fun hideLoadingProgress() {
         refresh_layout.isRefreshing = false
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQ_INFO_ACTIVITY -> {
-                    DialogFactory.showAlertMessage(this, getString(R.string.error_message)).show()
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    companion object {
-        private const val REQ_INFO_ACTIVITY = 0
     }
 }
